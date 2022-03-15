@@ -10,7 +10,7 @@ const MyStudent = require('./routers/MyStudent');
 // const Upload = require('./routers/Upload');
 
 require('dotenv/config');
-
+require('./cloudinary');
 
 //middleware call
 app.use(bodyParser.json());

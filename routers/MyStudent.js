@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Student } = require('../models/student');
 const multer = require('multer');
+const cloudniary = require('cloudinary');
 
 // multer start
 const FILE_TYPE_MAP = {
@@ -36,19 +37,14 @@ const uploadOptions = multer({ storage: storage })
 
 
 router.post(`/student`, uploadOptions.single('image'), async (req, res) => {
-    console.log(req.file)
+    const myimage = await cloudniary.v2.uploader.upload(req.file.path);
     try {
-        const files = req.file;
-        if (!files) return res.status(400).send('No image in the request!')
-
-        const file = files.filename;
-        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
         let createStudent = new Student({
             name: req.body.name,
             email: req.body.email,
             phone: req.body.phone,
             address: req.body.address,
-            image: `${basePath}${file}`
+            image: myimage.secure_url
         })
         createStudent = await createStudent.save();
         if (!createStudent) return res.status(500).send('The student cannot be created');
